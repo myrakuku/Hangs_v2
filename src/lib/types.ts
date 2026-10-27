@@ -44,6 +44,11 @@ export interface PainPointItem {
   updatedAt: string;
 }
 
+export type PainPointSnapshotItem = {
+  painPointId: string;
+  title: string;
+};
+
 export interface SolutionItem {
   id: string;
   title: string;
@@ -63,7 +68,7 @@ export type ApplyItem = {
   status: string;
   caseId: string;
   caseTitle: string;
-  painPointsSnapshot: PainPointItem[];
+  painPointsSnapshot: PainPointSnapshotItem[];
   createdAt: string;
   updatedAt: string;
 };

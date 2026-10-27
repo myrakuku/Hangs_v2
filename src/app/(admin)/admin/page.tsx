@@ -43,8 +43,8 @@ export default function AdminDashboard() {
           <h3 className="font-semibold mb-3">📋 近期申請</h3>
           {applies.map((a, idx) => (
             <div key={idx} className="py-2 border-b border-slate-100 last:border-b-0">
-              <div className="font-semibold text-sm">{a.cust}</div>
-              <div className="text-xs text-slate-500">{a.sales} <Badge variant="blue">{a.st}</Badge></div>
+              <div className="font-semibold text-sm">{a.applicantName}</div>
+              <div className="text-xs text-slate-500">{a.applicantContact} <Badge variant="blue">{a.status}</Badge></div>
             </div>
           ))}
         </Card>
