@@ -188,28 +188,6 @@ function Workspace() {
         </div>
       </div>
 
-      <div className="absolute right-[-5px] top-[7%] z-[3] flex items-center gap-[10px] rounded-[9px] border border-[#e5ece0] bg-[rgb(255_255_255_/_97%)] p-[12px_14px] text-[13px] leading-[1.5] shadow-[0_8px_26px_-12px_#263b1f2e] max-[1100px]:right-[-5px] max-[900px]:gap-2 max-[900px]:rounded-[7px] max-[900px]:p-[9px_10px] max-[900px]:text-[12px] animate-chip-float">
-        <span className="flex h-8 w-8 items-center justify-center rounded-[7px] bg-[#eaf5e5] text-[#6b9c3e] max-[900px]:h-7 max-[900px]:w-7 max-[900px]:rounded-[6px]">
-          <BrainCircuit size={18} />
-        </span>
-        <div>
-          你的 AI 工作夥伴
-          <small className="mt-[3px] block font-[Arial,sans-serif] text-[13px] text-[#929b8d] max-[900px]:mt-[2px] max-[900px]:text-[12px]">Built around your business</small>
-        </div>
-        <span className={onlineDotClass} />
-      </div>
-
-      <div className="absolute bottom-[7%] left-[-8px] z-[3] flex items-center gap-[10px] rounded-[9px] border border-[#e5ece0] bg-[rgb(255_255_255_/_97%)] p-[12px_14px] text-[13px] leading-[1.5] shadow-[0_8px_26px_-12px_#263b1f2e] max-[900px]:gap-2 max-[900px]:rounded-[7px] max-[900px]:p-[9px_10px] max-[900px]:text-[12px] animate-chip-float [animation-delay:1s]">
-        <span className="flex h-8 w-8 items-center justify-center rounded-[7px] bg-[#eff1f7] text-navy max-[900px]:h-7 max-[900px]:w-7 max-[900px]:rounded-[6px]">
-          <LockKeyhole size={17} />
-        </span>
-        <div>
-          你的資料，由你掌握
-          <small className="mt-[3px] block font-[Arial,sans-serif] text-[13px] text-[#929b8d] max-[900px]:mt-[2px] max-[900px]:text-[12px]">Privacy by design</small>
-        </div>
-        <ShieldCheck size={18} className="text-green" />
-      </div>
-
       <span className="absolute bottom-4 right-[46px] font-[Arial,sans-serif] text-[12px] tracking-[1.8px] text-[#889a87]" aria-hidden="true">
         01 / DESIGNED FOR POSSIBILITIES
       </span>
@@ -225,13 +203,14 @@ export default function Home() {
   return (
     <>
       <main id="main">
-        <section className="relative overflow-hidden bg-[radial-gradient(ellipse_at_80%_42%,#f1f8ec_0%,#fbfdf9_27%,#fff_56%)]" id="hero" aria-labelledby="hero-title">
-          <div className={`${containerClass} grid grid-cols-2 items-center gap-[10px] py-6 min-h-[616px] max-[1500px]:min-h-[661px] max-[1100px]:min-h-[594px] max-[900px]:min-h-[580px]`}>
-            <div className="relative z-[2] pb-4 animate-appear">
-              <h1 id="hero-title" className="ml-[-3px] text-[clamp(44px,4.5vw,61px)] font-[750] leading-[1.45] tracking-[-1.8px] max-[1500px]:text-[65px] max-[1100px]:text-[49px] max-[900px]:text-[43px]">
+        <section className="relative mx-[10px] overflow-hidden bg-[radial-gradient(ellipse_at_80%_42%,#f1f8ec_0%,#fbfdf9_27%,#fff_56%)]" id="hero" aria-labelledby="hero-title">
+          <div className="grid grid-cols-1 md:grid-cols-2 items-center py-6 md:pl-[--logo-offset] md:pl-6 lg:pl-8">
+            {/* 文字區：手機置中，平板以上靠左對齊和Logo間距一致 */}
+            <div className="relative pb-4 animate-appear text-center md:justify-center ">
+              <h1 id="hero-title" className="text-[clamp(2rem,5vw,4vh)] font-[750]">
                 少一點繁瑣，
                 <br />
-                <span className="relative whitespace-nowrap text-green">
+                <span className="relative whitespace-nowrap text-green inline-block">
                   多一點可能
                   <span className="text-green">。</span>
                   <svg viewBox="0 0 420 18" preserveAspectRatio="none" aria-hidden="true" className="absolute bottom-[-8px] left-0 h-3 w-[95%] fill-none stroke-lime opacity-70 [stroke-width:5] [stroke-linecap:round]">
@@ -239,25 +218,18 @@ export default function Home() {
                   </svg>
                 </span>
               </h1>
-
-              <p className="mt-[30px] max-w-[445px] text-[15px] font-normal leading-[2.05] text-[#6a7380] max-[1500px]:text-[16px] max-[1100px]:text-[13px] max-[900px]:max-w-[350px] max-[900px]:text-[12px]">
+              <p className="mt-[30px] text-[15px] font-normal leading-[2.05] text-[#6a7380]">
                 從一人公司到企業團隊，
                 <br className="hidden min-[900px]:inline" />
                 以 AI、自動化與穩健 IT，把時間還給真正重要的事。
               </p>
-
-              <div className="mt-[30px] flex items-center gap-3 max-[1100px]:gap-[15px] max-[900px]:gap-3">
+              <div className="mt-[30px] flex items-center justify-center  gap-3 max-[1100px]:gap-[15px] max-[900px]:gap-3">
                 <Link className={`${buttonClass} ${buttonPrimaryClass} max-[1100px]:gap-[15px] max-[1100px]:px-[17px] max-[1100px]:text-[12px] max-[900px]:gap-3 max-[900px]:px-[14px] max-[900px]:text-[13px]`} href="/services">
                   看看我們的服務
                   <ArrowUpRight size={18} />
                 </Link>
-                <button disabled={!ready} className={`${buttonClass} bg-white border-[#dfe5e1] text-navy shadow-none hover:bg-[#f6f9f6] hover:border-[#bccfc0] max-[1100px]:gap-[15px] max-[1100px]:px-[17px] max-[1100px]:text-[12px] max-[900px]:gap-3 max-[900px]:px-[14px] max-[900px]:text-[13px]`} onClick={() => openConsult()}>
-                  免費諮詢
-                  <ArrowRight size={17} />
-                </button>
               </div>
-
-              <div className="mt-[23px] flex items-center gap-[19px] text-[12px] text-[#7c8489] max-[900px]:gap-[13px] max-[900px]:text-[12px]">
+              <div className="mt-[23px] flex items-center justify-center gap-[19px] text-[12px] text-[#7c8489] max-[900px]:gap-[13px] max-[900px]:text-[12px]">
                 <span className="flex items-center gap-[5px]">
                   <Check size={14} className="text-green" />
                   從真實需求出發
@@ -268,16 +240,12 @@ export default function Home() {
                 </span>
               </div>
             </div>
-
-            <Workspace />
+            <div className="hidden md:flex">
+              <Workspace />
+            </div>
           </div>
-
-          <div className={`${containerClass} flex items-center justify-between pb-[26px]`}>
-            <span className="font-[Arial,sans-serif] text-[12px] tracking-[2.1px] text-[#8b9396] max-[900px]:text-[13px]">LESS REPETITION. MORE AMBITION.</span>
-            <a href="#trust" className="flex items-center gap-3 text-[12px] text-[#748077] hover:text-green" aria-label="向下探索實瀚科技">
-              向下探索
-              <ArrowDown size={14} />
-            </a>
+          <div className="md:hidden mt-4 flex justify-center">
+            <Workspace />
           </div>
         </section>
 

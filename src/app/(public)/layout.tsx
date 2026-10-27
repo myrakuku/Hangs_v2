@@ -31,7 +31,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <>
       <html lang="zh-Hant">
-        <body><a className="skip-link" href="#main">跳至主要內容</a><noscript>
+        <body><a className="fixed left-4 top-[-100px] z-[200] rounded-lg bg-navy px-5 py-3 text-white focus:top-3" href="#main">跳至主要內容</a><noscript>
           </noscript><SiteShell>{children}</SiteShell>
         </body>
       </html>;
