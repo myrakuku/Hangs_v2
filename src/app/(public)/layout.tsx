@@ -1,9 +1,8 @@
+// src/app/layout.tsx
+
 import type { Metadata, Viewport } from 'next';
 import { company, siteUrl } from '@/lib/site';
 import './globals.css';
-import './pages.css';
-import './catalog.css';
-import './choose.css';
 import SiteShell from '@/components/site-shell';
 
 export const metadata: Metadata = {
@@ -29,5 +28,14 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#ffffff' };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="zh-Hant"><body><a className="skip-link" href="#main">跳至主要內容</a><noscript><div style={{ padding: '10px 20px', background: '#eef5e4', color: '#162144', fontSize: 12, textAlign: 'center' }}>你仍可瀏覽服務、合作流程及常見問題。客群切換與諮詢摘要需要啟用 JavaScript。</div></noscript><SiteShell>{children}</SiteShell></body></html>;
-}
+  return (
+    <>
+      <html lang="zh-Hant">
+        <body><a className="skip-link" href="#main">跳至主要內容</a><noscript>
+          </noscript><SiteShell>{children}</SiteShell>
+        </body>
+      </html>;
+    </>
+  ); 
+
+};
