@@ -15,6 +15,22 @@ import type {
   RegionItem,
 } from "./types";
 
+export type {
+  SolutionItem,
+  CaseItem,
+  NewsItem,
+  ApplyItem,
+  AccountRow,
+  DevProject,
+  TagGroup,
+  SolCatalogItem,
+  CalendarEvent,
+  NoteItem,
+  IntroItem,
+  PainPointItem,
+  RegionItem,
+};
+
 export const solutions: SolutionItem[] = [
   {
     id: "demo-s1",
