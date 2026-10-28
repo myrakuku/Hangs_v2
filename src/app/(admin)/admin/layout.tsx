@@ -81,7 +81,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   // 登出 handler，你後續可以替換成真正 logout api
   const handleLogout = async () => {
     // await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/login");
+    router.push("/admin/login");
   };
 
   return (
@@ -204,14 +204,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   />
                   {/* 下拉面板 */}
                   <div className="absolute right-0 top-full z-50 mt-1 w-44 rounded-lg border border-gray-200 bg-white shadow-sm">
-                    <Link
+                    {/* <Link
                       href="/admin/settings"
                       onClick={() => setUserDropdownOpen(false)}
                       className="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-100 rounded-t-lg"
                     >
                       <Settings size={16} />
                       設定
-                    </Link>
+                    </Link> */}
                     <button
                       onClick={handleLogout}
                       className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-slate-100 rounded-b-lg"

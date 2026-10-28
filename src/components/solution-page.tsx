@@ -179,10 +179,6 @@ export default function SolutionPage({ data }: { data: Solution }) {
                 </p>
                 <div className="mt-[26px] flex items-center gap-[11px] max-[900px]:gap-[10px] max-[700px]:mt-6 max-[700px]:justify-center max-[700px]:gap-[10px]">
                   <ConsultButton className="gap-[17px] p-[13px_18px] text-[12px] max-[1100px]:px-[15px] max-[1100px]:gap-3 max-[900px]:min-h-[44px] max-[900px]:px-3 max-[900px]:gap-[10px] max-[900px]:text-[12px] max-[700px]:min-h-[45px] max-[700px]:px-4 max-[700px]:gap-3 max-[700px]:text-[13px] max-[370px]:px-3 max-[370px]:gap-[10px] max-[370px]:text-[12px]" />
-                  <a href="#solutions" className={`${buttonClass} ${buttonSecondaryClass} gap-[17px] p-[13px_18px] text-[12px] max-[1100px]:px-[15px] max-[1100px]:gap-3 max-[900px]:min-h-[44px] max-[900px]:px-3 max-[900px]:gap-[10px] max-[900px]:text-[12px] max-[700px]:min-h-[45px] max-[700px]:px-4 max-[700px]:gap-3 max-[700px]:text-[13px] max-[370px]:px-3 max-[370px]:gap-[10px] max-[370px]:text-[12px]`}>
-                    查看應用方向
-                    <ArrowDown size={16} />
-                  </a>
                 </div>
                 <p className="mt-[17px] flex items-center gap-[6px] text-[12px] text-[#86937b] max-[900px]:text-[13px] max-[900px]:leading-[1.9] max-[700px]:justify-center max-[700px]:gap-[5px] max-[700px]:text-[13px] max-[370px]:text-[12px]">
                   <Check size={13} className="text-green max-[700px]:h-3" />
@@ -191,11 +187,6 @@ export default function SolutionPage({ data }: { data: Solution }) {
               </div>
 
               <WorkflowVisual data={data} />
-            </div>
-
-            <div className="flex items-center justify-between gap-[15px] pb-[25px]">
-              <span className="font-[Arial,sans-serif] text-[13px] tracking-[1.8px] text-[#99a58e] max-[370px]:text-[4.5px] max-[370px]:tracking-[0.6px]">{data.english}</span>
-              <a href="#solutions" className="flex items-center gap-[10px] text-[12px] text-[#7e8f6f]">從你的工作開始<ArrowDown size={13} /></a>
             </div>
           </div>
         </section>
@@ -355,9 +346,6 @@ export default function SolutionPage({ data }: { data: Solution }) {
         <PageCTA title={data.ctaTitle} text={data.ctaText} checklist={data.contactList} />
         <RelatedSolutions current={data.slug} />
 
-        <div className="-mt-4 pb-9 text-center text-[12px] text-[#8e9e80]">
-          <Link href="/" className="inline-flex items-center gap-[7px]">回到首頁<ArrowUpRight size={13} /></Link>
-        </div>
       </main>
     </>
   );

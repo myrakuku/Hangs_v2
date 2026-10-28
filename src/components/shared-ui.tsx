@@ -1,9 +1,13 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
+import logo from '@/public/image/HangsLogo.png';
+
 import { useEffect, useRef, useState, useSyncExternalStore, type FormEvent, type ReactNode } from 'react';
 import { ArrowRight, Check, X, LockKeyhole, CircleCheck, Copy } from 'lucide-react';
 import { services } from '@/lib/site';
+
 
 const subscribeToHydration = () => () => {};
 const hydratedSnapshot = () => true;
@@ -30,7 +34,7 @@ const buttonSecondaryClass =
 export function Brand({ compact = false }: { compact?: boolean }) {
   return (
     <Link href="/" className="inline-flex shrink-0 items-center gap-[11px]" aria-label="實瀚科技首頁">
-      <svg
+      {/* <svg
         width={compact ? 32 : 38}
         height={compact ? 32 : 38}
         viewBox="0 0 44 44"
@@ -41,15 +45,21 @@ export function Brand({ compact = false }: { compact?: boolean }) {
         <path d="M5 5h9v13h16V5h9v34h-9V26H14v13H5z" fill="currentColor" />
         <path d="M14 18h16v8H14z" fill="#a9ce47" />
         <path d="M30 5h9v13h-9z" fill="#009c6f" />
-      </svg>
+      </svg> */}
+      <Image
+        src={logo}
+        alt="實瀚科技 HANGS TECHNOLOGY Logo"
+        width={70}
+        height={50}
+      />
       <span
-        className={`font-[750] leading-[1.4] ${compact ? 'text-[17px] tracking-[2.4px]' : 'text-[20px] tracking-[3px] max-[700px]:text-[16px] max-[700px]:tracking-[2px] max-[370px]:text-[15px] max-[370px]:tracking-[1.3px]'}`}
+        className={`font-[750] leading-[1.4] ${compact ? 'text-[16px] tracking-[2.4px]' : 'text-[20px] tracking-[3px] max-[700px]:text-[16px] max-[700px]:tracking-[2px] max-[370px]:text-[15px] max-[370px]:tracking-[1.3px]'}`}
       >
-        實瀚科技
+        HANGS
         <span
           className={`mt-[2px] block font-[Arial,sans-serif] font-semibold ${compact ? 'text-[12px] tracking-[1.8px]' : 'text-[13px] tracking-[1.65px] max-[700px]:tracking-[1.4px]'}`}
         >
-          HANGS TECHNOLOGY
+          實瀚科技
         </span>
       </span>
     </Link>
@@ -68,7 +78,6 @@ export function Modal({
   wide?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
-
   useEffect(() => {
     const dialog = ref.current;
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -85,45 +94,72 @@ export function Modal({
   return (
     <dialog
       ref={ref}
-      className={`w-[calc(100%-36px)] max-h-[calc(100dvh-48px)] max-w-[560px] overflow-y-auto overscroll-contain rounded-[18px] border border-[#e0e7dc] bg-white p-[30px] text-navy shadow-[0_30px_100px_#101d3340] [&::backdrop]:bg-[#1621446b] [&::backdrop]:backdrop-blur-[7px] open:animate-modal-enter max-[700px]:w-[calc(100%-26px)] max-[700px]:max-h-[calc(100dvh-28px)] max-[700px]:rounded-[13px] max-[700px]:p-[23px] ${wide ? 'max-w-[665px]' : ''}`}
+      className={`
+        open:animate-modal-enter
+        [&::backdrop]:bg-[#1621446b]
+        [&::backdrop]:backdrop-blur-[7px]
+        /* 核心：grid 置中 */
+        grid place-items-center
+        w-full h-full
+        max-w-none
+        p-0
+        border-0
+        bg-transparent
+      `}
       aria-labelledby="modal-title"
       onCancel={(event) => {
         event.preventDefault();
         onClose();
       }}
       onClick={(event) => {
+        // 點擊 backdrop（dialog 本身）才關閉，點內容區不觸發
         if (event.target === event.currentTarget) {
-          const bounds = event.currentTarget.getBoundingClientRect();
-          if (
-            event.clientX < bounds.left ||
-            event.clientX > bounds.right ||
-            event.clientY < bounds.top ||
-            event.clientY > bounds.bottom
-          ) {
-            onClose();
-          }
+          onClose();
         }
       }}
     >
-      <div className="mb-[14px] flex items-center justify-between gap-[15px] max-[700px]:mb-[11px]">
-        <span className="font-[Arial,sans-serif] text-[13px] font-medium tracking-[1.5px] text-[#859778] max-[700px]:text-[12px] max-[700px]:tracking-[1px]">
-          LET’S BUILD SOMETHING BETTER
-        </span>
-        <button
-          className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-transparent hover:bg-[#edf4ed]"
-          aria-label="關閉視窗"
-          onClick={onClose}
-        >
-          <X size={20} />
-        </button>
+      {/* 內容卡片：這層才設定寬高、邊框、背景、滾動 */}
+      <div
+        className={`
+          w-[calc(100%-36px)]
+          max-h-[calc(100dvh-48px)]
+          max-w-[560px]
+          overflow-y-auto
+          overscroll-contain
+          rounded-[18px]
+          border border-[#e0e7dc]
+          bg-white
+          p-[30px]
+          text-navy
+          shadow-[0_30px_100px_#101d3340]
+          max-[700px]:w-[calc(100%-26px)]
+          max-[700px]:max-h-[calc(100dvh-28px)]
+          max-[700px]:rounded-[13px]
+          max-[700px]:p-[23px]
+          ${wide ? 'max-w-[665px]' : ''}
+        `}
+      >
+        <div className="mb-[14px] flex items-center justify-between gap-[15px] max-[700px]:mb-[11px]">
+          <span className="font-[Arial,sans-serif] text-[13px] font-medium tracking-[1.5px] text-[#859778] max-[700px]:text-[12px] max-[700px]:tracking-[1px]">
+            LET’S BUILD SOMETHING BETTER
+          </span>
+          <button
+            className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-transparent hover:bg-[#edf4ed]"
+            aria-label="關閉視窗"
+            onClick={onClose}
+          >
+            <X size={20} />
+          </button>
+        </div>
+        <h2 id="modal-title" className="text-[27px] leading-[1.5] tracking-[-0.6px] max-[700px]:text-[24px]">
+          {title}
+        </h2>
+        {children}
       </div>
-      <h2 id="modal-title" className="text-[27px] leading-[1.5] tracking-[-0.6px] max-[700px]:text-[24px]">
-        {title}
-      </h2>
-      {children}
     </dialog>
   );
 }
+
 
 export function Consultation({
   onClose,

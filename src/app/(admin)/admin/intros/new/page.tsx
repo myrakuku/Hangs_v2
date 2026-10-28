@@ -1,395 +1,425 @@
 'use client';
 import { useState } from 'react';
-type WorkflowItem = {
-  title: string;
-  text: string;
+import { useRouter } from 'next/navigation';
+import { Plus, Trash2, ArrowLeft } from 'lucide-react';
+
+type Section = {
+  heading: string;
+  paragraphs: string[];
+  bullets: string[];
 };
-type FaqItem = {
-  question: string;
-  answer: string;
+
+type Result = {
+  label: string;
+  value: string;
+  note: string;
 };
-type ServiceDetailForm = {
+
+type CaseForm = {
   slug: string;
   title: string;
+  category: string;
   english: string;
-  tagline: string;
-  intro: string;
-  problem: string;
-  benefits: string[];
-  capabilities: string[];
-  workflow: WorkflowItem[];
-  fit: string[];
-  faqs: FaqItem[];
+  summary: string;
+  excerpt: string;
+  date: string;
+  readTime: string;
+  tags: string[];
+  lead: string;
+  sections: Section[];
+  result: Result;
 };
-const emptyWorkflow: WorkflowItem = { title: '', text: '' };
-const emptyFaq: FaqItem = { question: '', answer: '' };
-export default function NewServiceIntroPage() {
-  const [selectedCategorySlug, setSelectedCategorySlug] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState('');
-  const [form, setForm] = useState<ServiceDetailForm>({
-    slug: '',
-    title: '',
-    english: '',
-    tagline: '',
-    intro: '',
-    problem: '',
-    benefits: [''],
-    capabilities: [''],
-    workflow: [{ ...emptyWorkflow }],
-    fit: [''],
-    faqs: [{ ...emptyFaq }],
-  });
-  // 你原來的 catalog 定義，這頁只拿分類下拉
-  const categories = [
-    { slug: 'ai-applications', title: 'AI 應用與知識助手' },
-    { slug: 'workflow-integration', title: '工作流程與系統串接' },
-    { slug: 'cloud-devops', title: '雲端、DevOps 與技術維運' },
-    { slug: 'security', title: '資訊安全檢測與防禦' },
-    { slug: 'digital-platforms', title: '客製系統與數位平台' },
-    { slug: 'training', title: '實作培訓與技術轉移' },
-  ];
-  function handleChange<K extends keyof ServiceDetailForm>(key: K, value: ServiceDetailForm[K]) {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  }
-  // 簡單陣列項目更新器（字串陣列：benefits / capabilities / fit）
-  function updateStringArray(field: 'benefits' | 'capabilities' | 'fit', idx: number, val: string) {
-    const arr = [...form[field]];
-    arr[idx] = val;
-    handleChange(field, arr);
-  }
-  function addStringItem(field: 'benefits' | 'capabilities' | 'fit') {
-    handleChange(field, [...form[field], '']);
-  }
-  function removeStringItem(field: 'benefits' | 'capabilities' | 'fit', idx: number) {
-    const arr = form[field].filter((_, i) => i !== idx);
-    handleChange(field, arr.length ? arr : ['']);
-  }
-  // workflow
-  function updateWorkflow(idx: number, key: keyof WorkflowItem, val: string) {
-    const wf = [...form.workflow];
-    wf[idx] = { ...wf[idx], [key]: val };
-    handleChange('workflow', wf);
-  }
-  function addWorkflow() {
-    handleChange('workflow', [...form.workflow, { ...emptyWorkflow }]);
-  }
-  function removeWorkflow(idx: number) {
-    const wf = form.workflow.filter((_, i) => i !== idx);
-    handleChange('workflow', wf.length ? wf : [{ ...emptyWorkflow }]);
-  }
-  // faqs
-  function updateFaq(idx: number, key: keyof FaqItem, val: string) {
-    const faqs = [...form.faqs];
-    faqs[idx] = { ...faqs[idx], [key]: val };
-    handleChange('faqs', faqs);
-  }
-  function addFaq() {
-    handleChange('faqs', [...form.faqs, { ...emptyFaq }]);
-  }
-  function removeFaq(idx: number) {
-    const faqs = form.faqs.filter((_, i) => i !== idx);
-    handleChange('faqs', faqs.length ? faqs : [{ ...emptyFaq }]);
-  }
-  async function onSubmit(e: React.FormEvent) {
+
+const emptySection: Section = {
+  heading: '',
+  paragraphs: [''],
+  bullets: [''],
+};
+
+const initialForm: CaseForm = {
+  slug: '',
+  title: '',
+  category: '',
+  english: '',
+  summary: '',
+  excerpt: '',
+  date: new Date().toISOString().split('T')[0],
+  readTime: '',
+  tags: [],
+  lead: '',
+  sections: [{ ...emptySection }],
+  result: {
+    label: '',
+    value: '',
+    note: '',
+  },
+};
+
+export default function NewCasePage() {
+  const router = useRouter();
+  const [form, setForm] = useState<CaseForm>(initialForm);
+  const [tagInput, setTagInput] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const update = <K extends keyof CaseForm>(key: K, value: CaseForm[K]) => {
+    setForm(prev => ({ ...prev, [key]: value }));
+  };
+
+  // Tags
+  const addTag = () => {
+    const t = tagInput.trim();
+    if (!t || form.tags.includes(t)) return;
+    update('tags', [...form.tags, t]);
+    setTagInput('');
+  };
+  const removeTag = (idx: number) => {
+    update('tags', form.tags.filter((_, i) => i !== idx));
+  };
+
+  // Sections
+  const addSection = () => {
+    update('sections', [...form.sections, { ...emptySection }]);
+  };
+  const removeSection = (sIdx: number) => {
+    if (form.sections.length <= 1) return;
+    update('sections', form.sections.filter((_, i) => i !== sIdx));
+  };
+  const updateSectionHeading = (sIdx: number, val: string) => {
+    const next = [...form.sections];
+    next[sIdx].heading = val;
+    update('sections', next);
+  };
+  // Paragraph
+  const updatePara = (sIdx: number, pIdx: number, val: string) => {
+    const next = [...form.sections];
+    next[sIdx].paragraphs[pIdx] = val;
+    update('sections', next);
+  };
+  const addPara = (sIdx: number) => {
+    const next = [...form.sections];
+    next[sIdx].paragraphs.push('');
+    update('sections', next);
+  };
+  const removePara = (sIdx: number, pIdx: number) => {
+    const next = [...form.sections];
+    if (next[sIdx].paragraphs.length <= 1) return;
+    next[sIdx].paragraphs = next[sIdx].paragraphs.filter((_, i) => i !== pIdx);
+    update('sections', next);
+  };
+  // Bullet
+  const updateBullet = (sIdx: number, bIdx: number, val: string) => {
+    const next = [...form.sections];
+    next[sIdx].bullets[bIdx] = val;
+    update('sections', next);
+  };
+  const addBullet = (sIdx: number) => {
+    const next = [...form.sections];
+    next[sIdx].bullets.push('');
+    update('sections', next);
+  };
+  const removeBullet = (sIdx: number, bIdx: number) => {
+    const next = [...form.sections];
+    if (next[sIdx].bullets.length <= 1) return;
+    next[sIdx].bullets = next[sIdx].bullets.filter((_, i) => i !== bIdx);
+    update('sections', next);
+  };
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitting(true);
-    setMessage('');
-    const payload = {
-      categorySlug: selectedCategorySlug,
-      service: form,
-    };
+    setSaving(true);
     try {
-      // 👉 替換成你的 POST API route: /api/catalog/services
-      const res = await fetch('/api/catalog/services', {
+      const res = await fetch('/api/cases', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(form),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || '儲存失敗');
-      setMessage(`✅ 成功新增：${form.title}`);
-      // reset form
-      setForm({
-        slug: '',
-        title: '',
-        english: '',
-        tagline: '',
-        intro: '',
-        problem: '',
-        benefits: [''],
-        capabilities: [''],
-        workflow: [{ ...emptyWorkflow }],
-        fit: [''],
-        faqs: [{ ...emptyFaq }],
-      });
-    } catch (err: any) {
-      setMessage(`❌ ${err.message}`);
+      if (!res.ok) throw new Error('Save failed');
+      router.push('/admin/cases');
+      router.refresh();
+    } catch (err) {
+      console.error(err);
+      alert('儲存失敗');
     } finally {
-      setSubmitting(false);
+      setSaving(false);
     }
   }
+
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
-      <h1 className="mb-6 text-2xl font-bold">新增服務介紹（ServiceDetail）</h1>
-      <form onSubmit={onSubmit} className="space-y-6 rounded-lg bg-white border border-gray-300 p-6 shadow-sm">
-        {/* 分類選擇 */}
-        <div>
-          <label className="mb-2 block font-medium">所屬分類 *</label>
-          <select
-            value={selectedCategorySlug}
-            onChange={(e) => setSelectedCategorySlug(e.target.value)}
-            required
-            className="w-full rounded border border-gray-300 px-3 py-2"
-          >
-            <option value="">-- 選擇分類 --</option>
-            {categories.map((c) => (
-              <option key={c.slug} value={c.slug}>
-                {c.title}
-              </option>
-            ))}
-          </select>
-        </div>
-        {/* 基礎欄位 */}
-        <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <label className="mb-2 block font-medium">slug *</label>
-            <input
-              type="text"
-              value={form.slug}
-              onChange={(e) => handleChange('slug', e.target.value)}
-              required
-              placeholder="例如 ai-chatbot"
-              className="w-full rounded border border-gray-300 px-3 py-2"
-            />
-          </div>
-          <div>
-            <label className="mb-2 block font-medium">title 標題 *</label>
-            <input
-              type="text"
-              value={form.title}
-              onChange={(e) => handleChange('title', e.target.value)}
-              required
-              className="w-full rounded border border-gray-300 px-3 py-2"
-            />
-          </div>
-          <div>
-            <label className="mb-2 block font-medium">english</label>
-            <input
-              type="text"
-              value={form.english}
-              onChange={(e) => handleChange('english', e.target.value)}
-              className="w-full rounded border border-gray-300 px-3 py-2"
-            />
-          </div>
-          <div>
-            <label className="mb-2 block font-medium">tagline</label>
-            <input
-              type="text"
-              value={form.tagline}
-              onChange={(e) => handleChange('tagline', e.target.value)}
-              className="w-full rounded border border-gray-300 px-3 py-2"
-            />
-          </div>
-        </div>
-        <div>
-          <label className="mb-2 block font-medium">intro 簡介</label>
-          <textarea
-            value={form.intro}
-            onChange={(e) => handleChange('intro', e.target.value)}
-            rows={3}
-            className="w-full rounded border border-gray-300 px-3 py-2"
-          />
-        </div>
-        <div>
-          <label className="mb-2 block font-medium">problem 解決痛點</label>
-          <textarea
-            value={form.problem}
-            onChange={(e) => handleChange('problem', e.target.value)}
-            rows={2}
-            className="w-full rounded border border-gray-300 px-3 py-2"
-          />
-        </div>
-        {/* benefits */}
-        <fieldset className="rounded border border-gray-300 p-4">
-          <div className="flex items-center justify-between">
-            <legend className="font-medium">benefits 好處清單</legend>
-            <button
-              type="button"
-              onClick={() => addStringItem('benefits')}
-              className="text-sm text-blue-600"
-            >
-              + 新增項目
-            </button>
-          </div>
-          <div className="mt-3 space-y-2">
-            {form.benefits.map((item, idx) => (
-              <div key={idx} className="flex gap-2">
-                <input
-                  value={item}
-                  onChange={(e) => updateStringArray('benefits', idx, e.target.value)}
-                  className="flex-1 rounded border border-gray-300 px-3 py-1.5"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeStringItem('benefits', idx)}
-                  className="text-red-500"
-                >
-                  刪
-                </button>
-              </div>
-            ))}
-          </div>
-        </fieldset>
-        {/* capabilities */}
-        <fieldset className="rounded border border-gray-300 p-4">
-          <div className="flex items-center justify-between">
-            <legend className="font-medium">capabilities 服務內容</legend>
-            <button
-              type="button"
-              onClick={() => addStringItem('capabilities')}
-              className="text-sm text-blue-600"
-            >
-              + 新增項目
-            </button>
-          </div>
-          <div className="mt-3 space-y-2">
-            {form.capabilities.map((item, idx) => (
-              <div key={idx} className="flex gap-2">
-                <input
-                  value={item}
-                  onChange={(e) => updateStringArray('capabilities', idx, e.target.value)}
-                  className="flex-1 rounded border border-gray-300 px-3 py-1.5"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeStringItem('capabilities', idx)}
-                  className="text-red-500"
-                >
-                  刪
-                </button>
-              </div>
-            ))}
-          </div>
-        </fieldset>
-        {/* fit */}
-        <fieldset className="rounded border border-gray-300 p-4">
-          <div className="flex items-center justify-between">
-            <legend className="font-medium">fit 適合對象</legend>
-            <button
-              type="button"
-              onClick={() => addStringItem('fit')}
-              className="text-sm text-blue-600"
-            >
-              + 新增項目
-            </button>
-          </div>
-          <div className="mt-3 space-y-2">
-            {form.fit.map((item, idx) => (
-              <div key={idx} className="flex gap-2">
-                <input
-                  value={item}
-                  onChange={(e) => updateStringArray('fit', idx, e.target.value)}
-                  className="flex-1 rounded border border-gray-300 px-3 py-1.5"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeStringItem('fit', idx)}
-                  className="text-red-500"
-                >
-                  刪
-                </button>
-              </div>
-            ))}
-          </div>
-        </fieldset>
-        {/* workflow */}
-        <fieldset className="rounded border border-gray-300 p-4">
-          <div className="flex items-center justify-between">
-            <legend className="font-medium">workflow 導入流程</legend>
-            <button type="button" onClick={addWorkflow} className="text-sm text-blue-600">
-              + 新增流程步驟
-            </button>
-          </div>
-          <div className="mt-3 space-y-4">
-            {form.workflow.map((wf, idx) => (
-              <div key={idx} className="space-y-2 rounded bg-slate-50 p-3">
-                <div className="flex justify-between">
-                  <span className="text-sm font-semibold">步驟 {idx + 1}</span>
-                  <button
-                    type="button"
-                    onClick={() => removeWorkflow(idx)}
-                    className="text-red-500 text-sm"
-                  >
-                    刪除
-                  </button>
-                </div>
-                <input
-                  placeholder="title"
-                  value={wf.title}
-                  onChange={(e) => updateWorkflow(idx, 'title', e.target.value)}
-                  className="w-full rounded border border-gray-300 px-3 py-1.5"
-                />
-                <textarea
-                  placeholder="text"
-                  value={wf.text}
-                  onChange={(e) => updateWorkflow(idx, 'text', e.target.value)}
-                  rows={2}
-                  className="w-full rounded border border-gray-300 px-3 py-1.5"
-                />
-              </div>
-            ))}
-          </div>
-        </fieldset>
-        {/* faqs */}
-        <fieldset className="rounded border border-gray-300 p-4">
-          <div className="flex items-center justify-between">
-            <legend className="font-medium">faqs 常見問題</legend>
-            <button type="button" onClick={addFaq} className="text-sm text-blue-600">
-              + 新增 FAQ
-            </button>
-          </div>
-          <div className="mt-3 space-y-4">
-            {form.faqs.map((faq, idx) => (
-              <div key={idx} className="space-y-2 rounded bg-slate-50 p-3">
-                <div className="flex justify-between">
-                  <span className="text-sm font-semibold">FAQ {idx + 1}</span>
-                  <button
-                    type="button"
-                    onClick={() => removeFaq(idx)}
-                    className="text-red-500 text-sm"
-                  >
-                    刪除
-                  </button>
-                </div>
-                <input
-                  placeholder="question"
-                  value={faq.question}
-                  onChange={(e) => updateFaq(idx, 'question', e.target.value)}
-                  className="w-full rounded border border-gray-300 px-3 py-1.5"
-                />
-                <textarea
-                  placeholder="answer"
-                  value={faq.answer}
-                  onChange={(e) => updateFaq(idx, 'answer', e.target.value)}
-                  rows={3}
-                  className="w-full rounded border border-gray-300 px-3 py-1.5"
-                />
-              </div>
-            ))}
-          </div>
-        </fieldset>
-        {message && <div className="rounded bg-slate-100 p-3">{message}</div>}
-        <div className="flex gap-4">
+    <div className="min-h-screen bg-slate-50 p-4 md:p-8">
+      <div className="mx-auto max-w-4xl">
+        <div className="mb-6 flex items-center justify-between">
           <button
-            type="submit"
-            disabled={submitting || !selectedCategorySlug}
-            className="rounded bg-blue-600 px-6 py-2 text-white disabled:opacity-50"
+            onClick={() => router.back()}
+            className="inline-flex items-center gap-1 text-sm text-slate-600 hover:text-slate-900"
           >
-            {submitting ? '儲存中...' : '儲存新增服務'}
+            <ArrowLeft size={16} /> 返回案例列表
           </button>
+          <h1 className="text-xl font-bold text-slate-800">新增案例</h1>
         </div>
-      </form>
+
+        <form onSubmit={handleSubmit} className="space-y-6 rounded-xl bg-white p-6 shadow-sm">
+          {/* 基礎欄位 */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <label className="space-y-1">
+              <span className="text-sm font-medium text-slate-700">Slug</span>
+              <input
+                required
+                value={form.slug}
+                onChange={(e) => update('slug', e.target.value)}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-green focus:outline-none focus:ring-1 focus:ring-[#009c6f]"
+                placeholder="tutoring-centre-management"
+              />
+            </label>
+            <label className="space-y-1">
+              <span className="text-sm font-medium text-slate-700">分類 category</span>
+              <input
+                required
+                value={form.category}
+                onChange={(e) => update('category', e.target.value)}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-green focus:outline-none focus:ring-1 focus:ring-[#009c6f]"
+                placeholder="教育"
+              />
+            </label>
+          </div>
+
+          <label className="space-y-1">
+            <span className="text-sm font-medium text-slate-700">標題 title</span>
+            <input
+              required
+              value={form.title}
+              onChange={(e) => update('title', e.target.value)}
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-green focus:outline-none focus:ring-1 focus:ring-[#009c6f]"
+              placeholder="補習社數碼轉型：排堂、計糧、帳目一次過整合"
+            />
+          </label>
+
+          <label className="space-y-1">
+            <span className="text-sm font-medium text-slate-700">英文標題 english</span>
+            <input
+              required
+              value={form.english}
+              onChange={(e) => update('english', e.target.value)}
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-green focus:outline-none focus:ring-1 focus:ring-[#009c6f]"
+              placeholder="TUTORING CENTRE MANAGEMENT"
+            />
+          </label>
+
+          <label className="space-y-1">
+            <span className="text-sm font-medium text-slate-700">摘要 summary</span>
+            <textarea
+              required
+              rows={2}
+              value={form.summary}
+              onChange={(e) => update('summary', e.target.value)}
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-green focus:outline-none focus:ring-1 focus:ring-[#009c6f]"
+            />
+          </label>
+
+          <label className="space-y-1">
+            <span className="text-sm font-medium text-slate-700">簡介 excerpt</span>
+            <textarea
+              required
+              rows={2}
+              value={form.excerpt}
+              onChange={(e) => update('excerpt', e.target.value)}
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-green focus:outline-none focus:ring-1 focus:ring-[#009c6f]"
+            />
+          </label>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <label className="space-y-1">
+              <span className="text-sm font-medium text-slate-700">發布日期 date</span>
+              <input
+                required
+                type="date"
+                value={form.date}
+                onChange={(e) => update('date', e.target.value)}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-green focus:outline-none focus:ring-1 focus:ring-[#009c6f]"
+              />
+            </label>
+            <label className="space-y-1">
+              <span className="text-sm font-medium text-slate-700">閱讀時間 readTime</span>
+              <input
+                required
+                value={form.readTime}
+                onChange={(e) => update('readTime', e.target.value)}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-green focus:outline-none focus:ring-1 focus:ring-[#009c6f]"
+                placeholder="6 分鐘"
+              />
+            </label>
+          </div>
+
+          <label className="space-y-1">
+            <span className="text-sm font-medium text-slate-700">Lead 開頭導文</span>
+            <textarea
+              required
+              rows={3}
+              value={form.lead}
+              onChange={(e) => update('lead', e.target.value)}
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-green focus:outline-none focus:ring-1 focus:ring-[#009c6f]"
+            />
+          </label>
+
+          {/* Tags */}
+          <div className="space-y-2">
+            <span className="text-sm font-medium text-slate-700">Tags</span>
+            <div className="flex flex-wrap gap-2">
+              {form.tags.map((tag, i) => (
+                <span key={i} className="inline-flex items-center gap-1 rounded bg-[#f0f7f3] px-2 py-1 text-xs text-[#007c59]">
+                  {tag}
+                  <button type="button" onClick={() => removeTag(i)} className="hover:text-red-500">×</button>
+                </span>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <input
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-green focus:outline-none focus:ring-1 focus:ring-[#009c6f]"
+                placeholder="輸入標籤，Enter 新增"
+              />
+              <button type="button" onClick={addTag} className="rounded-lg bg-[#009c6f] px-3 py-2 text-sm text-white">新增</button>
+            </div>
+          </div>
+
+          {/* Sections */}
+          <div className="space-y-4 border-t border-gray-100 pt-6">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-slate-800">章節 sections</h2>
+              <button
+                type="button"
+                onClick={addSection}
+                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-2 py-1 text-xs hover:bg-slate-50"
+              >
+                <Plus size={14} /> 新增章節
+              </button>
+            </div>
+
+            {form.sections.map((sec, sIdx) => (
+              <div key={sIdx} className="rounded-lg border border-slate-200 p-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="text-xs text-slate-500">章節 #{sIdx + 1}</span>
+                  <button
+                    type="button"
+                    onClick={() => removeSection(sIdx)}
+                    className="text-xs text-red-500 hover:text-red-700"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+                <label className="block space-y-1">
+                  <span className="text-xs text-slate-600">Heading 標題</span>
+                  <input
+                    value={sec.heading}
+                    onChange={(e) => updateSectionHeading(sIdx, e.target.value)}
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                    placeholder="背景：客戶是家長，服務對象是小朋友"
+                  />
+                </label>
+
+                <div className="mt-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-slate-600">段落 paragraphs</span>
+                    <button type="button" onClick={() => addPara(sIdx)} className="text-xs text-[#009c6f]">+ 段落</button>
+                  </div>
+                  {sec.paragraphs.map((p, pIdx) => (
+                    <div key={pIdx} className="flex gap-2">
+                      <textarea
+                        rows={2}
+                        value={p}
+                        onChange={(e) => updatePara(sIdx, pIdx, e.target.value)}
+                        className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removePara(sIdx, pIdx)}
+                        className="self-start text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-slate-600">項目 bullets</span>
+                    <button type="button" onClick={() => addBullet(sIdx)} className="text-xs text-[#009c6f]">+ 項目</button>
+                  </div>
+                  {sec.bullets.map((b, bIdx) => (
+                    <div key={bIdx} className="flex gap-2">
+                      <input
+                        value={b}
+                        onChange={(e) => updateBullet(sIdx, bIdx, e.target.value)}
+                        className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeBullet(sIdx, bIdx)}
+                        className="self-start text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Result 成效 */}
+          <div className="space-y-3 border-t border-gray-100 pt-6">
+            <h2 className="font-semibold text-slate-800">成果 result</h2>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <label className="space-y-1">
+                <span className="text-sm font-medium text-slate-700">label</span>
+                <input
+                  value={form.result.label}
+                  onChange={(e) => update('result', { ...form.result, label: e.target.value })}
+                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                  placeholder="整體成效"
+                />
+              </label>
+              <label className="space-y-1">
+                <span className="text-sm font-medium text-slate-700">value</span>
+                <input
+                  value={form.result.value}
+                  onChange={(e) => update('result', { ...form.result, value: e.target.value })}
+                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                  placeholder="行政時間慳 60%"
+                />
+              </label>
+            </div>
+            <label className="space-y-1">
+              <span className="text-sm font-medium text-slate-700">note 備註</span>
+              <textarea
+                rows={2}
+                value={form.result.note}
+                onChange={(e) => update('result', { ...form.result, note: e.target.value })}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              />
+            </label>
+          </div>
+
+          <div className="flex justify-end gap-3 border-t border-gray-100 pt-6">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="rounded-lg border border-slate-200 px-5 py-2 text-sm hover:bg-slate-50"
+            >
+              取消
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              className="rounded-lg bg-[#009c6f] px-5 py-2 text-sm text-white disabled:opacity-60"
+            >
+              {saving ? '儲存中…' : '儲存案例'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
