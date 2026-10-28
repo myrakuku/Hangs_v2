@@ -50,7 +50,8 @@ export function Brand({ compact = false }: { compact?: boolean }) {
         src={logo}
         alt="實瀚科技 HANGS TECHNOLOGY Logo"
         width={70}
-        height={50}
+        height={70}
+        style={{ width: '100%', height: 'auto' }}
       />
       <span
         className={`font-[750] leading-[1.4] ${compact ? 'text-[16px] tracking-[2.4px]' : 'text-[20px] tracking-[3px] max-[700px]:text-[16px] max-[700px]:tracking-[2px] max-[370px]:text-[15px] max-[370px]:tracking-[1.3px]'}`}
